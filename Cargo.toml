@@ -1,0 +1,58 @@
+[package]
+name = "awesome-wotlk-patcher"
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <your.email@example.com>"]
+description = "World of Warcraft: Wrath of the Lich King patch utility"
+
+[[bin]]
+name = "patcher"
+path = "src/main.rs"
+
+[lib]
+name = "awesome_wotlk_lib"
+crate-type = ["cdylib"]
+path = "src/lib/mod.rs"
+
+[dependencies]
+# PE file parsing and manipulation
+goblin = "0.8"
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+# Command line argument parsing
+clap = { version = "4.0", features = ["derive"] }
+# Function hooking for DLL
+retour = "0.3"
+# Memory manipulation
+winapi = { version = "0.3", features = ["winuser", "processthreadsapi", "memoryapi", "winbase", "windef", "debugapi"] }
+# Lua bindings
+mlua = { version = "0.9", features = ["lua54", "vendored"] }
+# Lazy static for global variables
+lazy_static = "1.4"
+
+[target.'cfg(windows)'.dependencies]
+# Windows-specific dependencies for message boxes and API access
+windows = { version = "0.58", features = [
+    "Win32_Foundation",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_System_LibraryLoader",
+    "Win32_System_Threading",
+    "Win32_System_Memory",
+    "Win32_System_Diagnostics_Debug",
+] }
+windows-sys = { version = "0.59", features = [
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_Foundation",
+] }
+
+[dev-dependencies]
+tempfile = "3.0"
+
+[profile.release]
+# Optimize for size since this is a utility
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
